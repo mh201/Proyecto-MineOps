@@ -1,0 +1,881 @@
+/* ==========================================================================
+   MINEOPS DISPATCH SYSTEM - STYLES.CSS (DARK COMMAND CENTER - FIXED)
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+  
+  /* Paleta Base - Dark Navy Industrial */
+  --bg: #0b253c;
+  --bg-grad-1: #0b253c;
+  --bg-grad-2: #0f2f4d;
+  --bg-grid: rgba(234, 244, 251, 0.055);
+  --surface: #123f68;
+  --surface-2: #164873;
+  --surface-3: #1c5487;
+  --border: rgba(234, 244, 251, 0.16);
+  --border-strong: rgba(234, 244, 251, 0.32);
+  
+  /* Tipografía y Textos */
+  --ink: #eaf4fb;
+  --ink-dim: #9cc3dd;
+  --ink-faint: #5f88a8;
+  
+  /* Acentos y Señalética */
+  --accent: #ff7a1a;
+  --accent-soft: rgba(255, 122, 26, 0.16);
+  --accent-ink: #2a1400;
+  --warn: #ffd23f;
+  --warn-soft: rgba(255, 210, 63, 0.14);
+  --danger: #ff5c5c;
+  --danger-soft: rgba(255, 92, 92, 0.16);
+  --ok: #6ee7b7;
+  --ok-soft: rgba(110, 231, 183, 0.14);
+  --pala: #7dd3fc;
+
+  /* Dimensiones */
+  --sidebar-width: 260px;
+  --top-header-height: 60px;
+}
+
+/* --------------------------------------------------------------------------
+   0. TEMA CLARO (activado con [data-theme="light"] en <html>)
+   Se redefinen únicamente las variables -- todo lo demás (layout, componentes)
+   ya está escrito en términos de var(--...), así que se adapta solo.
+   Los canvases de Plotly (Simulación 2D / Recorrido 3D) NO están cubiertos acá:
+   sus colores se generan en JS (map2D.js, recorrido3D.js) y quedan oscuros en
+   ambos temas por ahora.
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #eef2f7;
+  --bg-grad-1: #eef2f7;
+  --bg-grad-2: #dde6ef;
+  --bg-grid: rgba(11, 37, 60, 0.05);
+  --surface: #ffffff;
+  --surface-2: #f4f7fb;
+  --surface-3: #e8eef5;
+  --border: rgba(11, 37, 60, 0.12);
+  --border-strong: rgba(11, 37, 60, 0.24);
+
+  --ink: #0b253c;
+  --ink-dim: #45607a;
+  --ink-faint: #7c93a8;
+
+  --accent-soft: rgba(255, 122, 26, 0.12);
+  --warn-soft: rgba(230, 168, 0, 0.14);
+  --danger-soft: rgba(214, 48, 48, 0.12);
+  --ok-soft: rgba(13, 148, 105, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   1. RESETS Y ESTILOS GLOBALES
+   -------------------------------------------------------------------------- */
+* { 
+  box-sizing: border-box; 
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: 'Public Sans', -apple-system, sans-serif;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* Textura Blueprint de Fondo */
+body {
+  background-image:
+    repeating-linear-gradient(0deg, var(--bg-grid) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, var(--bg-grid) 0 1px, transparent 1px 28px),
+    linear-gradient(180deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
+  background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   2. TIPOGRAFÍA Y CLASES DE UTILIDAD
+   -------------------------------------------------------------------------- */
+h1, h2, h3, h4, .heading-display { 
+  font-family: 'Big Shoulders Display', sans-serif; 
+  font-weight: 700; 
+  letter-spacing: .02em; 
+  text-transform: uppercase; 
+  margin: 0; 
+}
+
+h1 { font-size: 28px; }
+h2 { font-size: 22px; }
+h3 { font-size: 18px; }
+
+/* Tipografía Monospaciada */
+.mono, .meta, .timestamp, table, code, .btn, input, select, .kpi-val, label { 
+  font-family: 'JetBrains Mono', monospace; 
+  font-variant-numeric: tabular-nums; 
+}
+
+.text-dim { color: var(--ink-dim); }
+.text-faint { color: var(--ink-faint); }
+.text-accent { color: var(--accent); }
+.text-ok { color: var(--ok); }
+.text-danger { color: var(--danger); }
+.text-warn { color: var(--warn); }
+
+/* --------------------------------------------------------------------------
+   3. LAYOUT PRINCIPAL Y SIDEBAR
+   -------------------------------------------------------------------------- */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  align-items: stretch;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border-strong);
+  box-shadow: 6px 0 24px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, width 0.25s ease, background-color 0.2s ease;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed {
+  width: 72px;
+}
+
+.sidebar.collapsed .logo-text,
+.sidebar.collapsed .label,
+.sidebar.collapsed .nav-divider,
+.sidebar.collapsed #global-status-text {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.sidebar.collapsed .nav-btn {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.sidebar.collapsed .status-indicator {
+  justify-content: center;
+}
+
+.sidebar-header {
+  padding: 22px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--border-strong);
+  background:
+    linear-gradient(135deg, rgba(255, 122, 26, 0.14), rgba(0, 0, 0, 0.05) 65%),
+    rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+/* Filo de acento en la base del header, para separar el "logo" del menú
+   con más autoridad que un simple border-bottom sutil. */
+.sidebar-header::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent 85%);
+}
+
+.logo-icon {
+  font-size: 26px;
+  background: linear-gradient(150deg, var(--accent), #ff9a4d);
+  color: var(--accent-ink);
+  padding: 9px 11px;
+  border-radius: 8px;
+  line-height: 1;
+  box-shadow: 0 4px 14px rgba(255, 122, 26, 0.4);
+  flex-shrink: 0;
+}
+
+.logo-text h2 {
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--ink);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.logo-text span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.logo-text span::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px 1px rgba(255, 122, 26, 0.7);
+  flex-shrink: 0;
+}
+
+.sidebar-nav {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nav-divider {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 18px 10px 6px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--ink-dim);
+  font-size: 14.5px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: all 0.15s ease;
+}
+
+.nav-btn .icon {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.nav-btn .label {
+  font-family: 'Public Sans', sans-serif;
+  font-weight: 500;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--border);
+}
+
+.nav-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-weight: 600;
+}
+
+.nav-btn:disabled, .nav-btn.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+  box-shadow: 0 0 0 2px var(--danger-soft);
+  transition: background 0.3s ease;
+}
+
+.status-dot.active {
+  background: var(--ok);
+  box-shadow: 0 0 0 3px var(--ok-soft);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.top-header {
+  height: var(--top-header-height);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.toggle-menu-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.toggle-menu-btn:hover {
+  background: var(--surface-3);
+  border-color: var(--accent);
+}
+
+#view-title {
+  color: var(--ink);
+  font-size: 26px;
+  letter-spacing: .03em;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 3px solid var(--accent);
+  padding-left: 14px;
+}
+
+.theme-toggle-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--surface-3);
+  border-color: var(--accent);
+}
+
+.view-content {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadein 0.25s ease-out;
+}
+
+/* --------------------------------------------------------------------------
+   4. COMPONENTES Y VISTA CARGAR
+   -------------------------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.upload-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 14px;
+  margin-bottom: 20px;
+}
+
+.drop-zone, .file-dropzone {
+  border: 2px dashed var(--accent);
+  background: rgba(18, 63, 104, 0.4);
+  border-radius: 8px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.drop-zone:hover, .drop-zone.dragover,
+.file-dropzone:hover, .file-dropzone.dragover {
+  background: var(--surface-2);
+  border-color: #ff9a4d;
+  box-shadow: 0 0 20px rgba(255, 122, 26, 0.25);
+  transform: translateY(-2px);
+}
+
+.drop-zone.loaded {
+  border-color: var(--ok);
+  background: rgba(110, 231, 183, 0.08);
+  box-shadow: 0 0 15px rgba(110, 231, 183, 0.15);
+}
+
+.drop-icon {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  align-items: flex-end;
+  margin-top: 14px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.filter-group label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  letter-spacing: 0.05em;
+}
+
+input[type="text"], 
+input[type="number"], 
+input[type="date"],
+input[type="time"], 
+select {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  padding: 9px 12px;
+  border-radius: 4px;
+  outline: none;
+  font-size: 13px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+input:focus, select:focus {
+  border-color: var(--accent);
+  background: var(--surface-3);
+}
+
+.checkbox-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.progress-bar-container {
+  width: 100%;
+  background: var(--surface-2);
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 15px;
+  display: none;
+  border: 1px solid var(--border);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--ok));
+  transition: width 0.3s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 12px 24px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+/* --------------------------------------------------------------------------
+   5. NOTIFICACIONES TOAST
+   -------------------------------------------------------------------------- */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.toast {
+  background: var(--surface-2);
+  border-left: 4px solid var(--accent);
+  color: var(--ink);
+  padding: 12px 18px;
+  border-radius: 4px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: fadein 0.2s ease-out;
+}
+
+.toast.success { border-left-color: var(--ok); }
+.toast.warning { border-left-color: var(--warn); }
+.toast.danger { border-left-color: var(--danger); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .35; }
+}
+
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+
+/* ==========================================================================
+   MÓDULO SIMULACIÓN 2D - PLOTLY HUD & CANVAS
+   ========================================================================== */
+
+.simulation-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - var(--top-header-height) - 48px);
+  display: flex;
+  flex-direction: column;
+  background: #0b1320;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.plotly-canvas-container {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+
+/* HUD Flotante Superior */
+.sim-hud {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 80;
+  width: 90%;
+  max-width: 850px;
+  background: rgba(9, 32, 53, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.hud-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hud-group.fill {
+  flex: 1;
+}
+
+.hud-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+
+.hud-btn:hover {
+  background: var(--surface-3);
+  border-color: var(--accent);
+}
+
+.hud-btn.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  font-weight: bold;
+}
+
+.hud-btn.primary.active {
+  box-shadow: 0 0 12px var(--accent);
+}
+
+.hud-btn.active:not(.primary) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.time-display {
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 600;
+  min-width: 70px;
+}
+
+.sim-slider {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.hud-label {
+  font-size: 10px;
+  color: var(--ink-dim);
+}
+
+.hud-select {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+/* ==========================================================================
+   6. MÓDULO KPIS Y REPORTES (TARJETAS, TABLAS, METERS, BADGES)
+   ========================================================================== */
+
+.section-sub {
+  color: var(--ink-dim);
+  font-size: 13px;
+  margin: 4px 0 4px;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi::before {
+  content: '';
+  position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+  background: var(--accent); opacity: .8;
+}
+
+.kpi .n {
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-size: 32px; font-weight: 800; color: var(--accent); line-height: 1;
+}
+.kpi .n.danger { color: var(--danger); }
+.kpi .n.ok { color: var(--ok); }
+.kpi .l {
+  font-size: 11.5px; color: var(--ink-dim); margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .03em;
+}
+
+/* Tablas de reporte */
+table.tabla { border-collapse: collapse; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; font-size: 13px; }
+table.tabla th, table.tabla td { border-bottom: 1px solid var(--border); padding: 9px 12px; text-align: left; }
+table.tabla th { background: var(--surface-2); color: var(--ink-dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+table.tabla tr:last-child td { border-bottom: none; }
+table.tabla tr:hover td { background: var(--surface-3); }
+.table-wrap { overflow-x: auto; border-radius: 6px; }
+.sev-high { color: var(--danger); font-weight: 600; }
+.sev-mid { color: var(--warn); }
+.sev-low { color: var(--ink-dim); }
+
+/* Bloques agrupados por zona operativa */
+.zona-block { margin-bottom: 22px; }
+.zona-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.zona-head h3 { font-size: 16px; }
+.zona-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--accent-soft); color: var(--accent); padding: 2px 9px; border-radius: 20px; border: 1px solid var(--border); }
+
+/* Barras horizontales de comparación (por camión / por pala) */
+.meter-block { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px 18px; margin-bottom: 12px; }
+h4.block-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-dim); margin: 0 0 12px; font-weight: 600; }
+.meter-row { display: grid; grid-template-columns: 92px 1fr auto; align-items: center; gap: 12px; padding: 7px 0; }
+.meter-row + .meter-row { border-top: 1px solid var(--border); }
+.meter-row .lbl { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); }
+.meter-track { position: relative; height: 16px; background: rgba(234, 244, 251, .06); border-radius: 3px; overflow: hidden; display: flex; }
+.meter-fill { height: 100%; width: 0; transition: width 1s cubic-bezier(.2,.8,.2,1); border-radius: 3px; }
+.meter-track .meter-fill:not(:only-child) { border-radius: 0; }
+.meter-track .meter-fill:not(:only-child):first-child { border-radius: 3px 0 0 3px; }
+.meter-track .meter-fill:not(:only-child):last-child { border-radius: 0 3px 3px 0; }
+.meter-val { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink-dim); min-width: 92px; text-align: right; }
+.meter-limit { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); box-shadow: 0 0 0 1px rgba(11, 37, 60, .6); z-index: 2; }
+
+/* Badges de estado */
+.badge { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; padding: 2px 9px; border-radius: 20px; border: 1px solid var(--border); }
+.badge-ok { color: var(--ok); background: var(--ok-soft); border-color: transparent; }
+.badge-danger { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
+
+/* Notas metodológicas */
+.note-card { background: var(--surface); border: 1px dashed var(--border-strong); border-radius: 6px; padding: 20px; color: var(--ink-dim); font-size: 13.5px; }
+.note-card b { color: var(--ink); }
+.note-card ul { padding-left: 18px; margin: 10px 0; }
+.note-card li { margin: 4px 0; }
+.kpi-note { font-size: 12px; color: var(--ink-faint); margin: 10px 2px 4px; font-family: 'Public Sans', sans-serif; }
+.kpi-note b { color: var(--ink-dim); }
+
+/* ==========================================================================
+   7. GRÁFICO DE BARRAS VERTICALES (Costo y Energía)
+   ========================================================================== */
+
+.vbar-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 26px;
+  height: 240px;
+  padding: 10px 14px 0;
+  overflow-x: auto;
+}
+
+.vbar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  min-width: 78px;
+  flex-shrink: 0;
+}
+
+.vbar-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+  white-space: nowrap;
+}
+
+.vbar-track {
+  width: 42px;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(234, 244, 251, 0.04);
+  border-radius: 5px 5px 2px 2px;
+  overflow: hidden;
+}
+
+.vbar {
+  width: 100%;
+  height: 0;
+  border-radius: 5px 5px 0 0;
+  transition: height 1s cubic-bezier(.2, .8, .2, 1);
+}
+
+.vbar-fuel { background: linear-gradient(180deg, #ffd23f, #b8860b); }
+.vbar-energy { background: linear-gradient(180deg, #7dd3fc, #1a6ea8); }
+
+.vbar-label {
+  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  text-align: center;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.3;
+  max-width: 90px;
+}

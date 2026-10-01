@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MineOps Dispatch - Control Operativo</title>
+    <!-- Aplica el tema guardado ANTES de pintar, para evitar el parpadeo
+         (cargar en oscuro y luego saltar a claro, o viceversa). -->
+    <script>
+        (function () {
+            const saved = localStorage.getItem('mineops-theme');
+            if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+        })();
+    </script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Carga de SheetJS para soporte de archivos Excel (.xlsx/.xls) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        if (typeof XLSX === 'undefined') {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"><\/script>');
+        }
+    </script>
+
+    <!-- Plotly.js para renderizado técnico 2D y 3D -->
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js" charset="utf-8"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar lateral -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">⛏️</div>
+                <div class="logo-text">
+                    <h2>MineOps</h2>
+                    <span>Dispatch System</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-view="inicio">
+                    <span class="icon">🏠</span>
+                    <span class="label">Presentación</span>
+                </button>
+                <button class="nav-btn" data-view="cargar">
+                    <span class="icon">📂</span>
+                    <span class="label">Cargar y Filtrar</span>
+                </button>
+                <button class="nav-btn disabled" data-view="parametros" id="btn-parametros" disabled>
+                    <span class="icon">⚙️</span>
+                    <span class="label">Parámetros y Supuestos</span>
+                </button>
+
+                <div class="nav-divider">ANÁLISIS Y KPIS</div>
+
+                <button class="nav-btn disabled" data-view="simulacion" id="btn-simulacion" disabled>
+                    <span class="icon">🗺️</span>
+                    <span class="label">Simulación 2D</span>
+                </button>
+                <button class="nav-btn disabled" data-view="recorrido3D" id="btn-recorrido3D" disabled>
+                    <span class="icon">🧊</span>
+                    <span class="label">Recorrido 3D</span>
+                </button>
+                <button class="nav-btn disabled" data-view="resumen" id="btn-resumen" disabled>
+                    <span class="icon">📈</span>
+                    <span class="label">Resumen Operativo</span>
+                </button>
+                <button class="nav-btn disabled" data-view="productividad" id="btn-productividad" disabled>
+                    <span class="icon">📊</span>
+                    <span class="label">Productividad</span>
+                </button>
+                <button class="nav-btn disabled" data-view="eficiencia" id="btn-eficiencia" disabled>
+                    <span class="icon">⚡</span>
+                    <span class="label">Eficiencia y Ciclos</span>
+                </button>
+                <button class="nav-btn disabled" data-view="costos" id="btn-costos" disabled>
+                    <span class="icon">⛽</span>
+                    <span class="label">Costo y Energía</span>
+                </button>
+                <button class="nav-btn disabled" data-view="seguridad" id="btn-seguridad" disabled>
+                    <span class="icon">🛡️</span>
+                    <span class="label">Seguridad</span>
+                </button>
+
+                <div class="nav-divider">EXPORTAR</div>
+
+                <button class="nav-btn disabled" data-view="powerbi" id="btn-powerbi" disabled>
+                    <span class="icon">🔗</span>
+                    <span class="label">Power BI</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="status-dot" id="global-status-dot"></span>
+                    <span id="global-status-text">Sin datos cargados</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Área Principal -->
+        <main class="main-content">
+            <header class="top-header">
+                <button class="toggle-menu-btn" id="toggle-sidebar">☰</button>
+                <h1 class="heading-display" id="view-title">Centro de Control Operativo</h1>
+                <button class="theme-toggle-btn" id="toggle-theme" title="Cambiar tema claro / oscuro">🌙</button>
+            </header>
+
+            <div id="view-container" class="view-content"></div>
+        </main>
+    </div>
+
+    <!-- Contenedor para notificaciones Toast flotantes -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts del Proyecto -->
+    <script src="js/dataProcessor.js"></script>
+    <script src="js/zones.js"></script>
+    <script src="js/trajectories.js"></script>
+    <script src="js/map2D.js"></script>
+    <script src="js/playback.js"></script>
+    <script src="js/views/inicio.js"></script>
+    <script src="js/views/cargar.js"></script>
+    <script src="js/views/parametros.js"></script>
+    <script src="js/views/simulacion.js"></script>
+    
+    <!-- Módulos de la vista 3D -->
+    <script src="js/views/recorrido3D/trajectories3D.js"></script>
+    <script src="js/views/recorrido3D/terrain3D.js"></script>
+    <script src="js/views/recorrido3D.js"></script>
+
+    <!-- Vistas de reportes y KPIs -->
+    <script src="js/views/resumen.js"></script>
+    <script src="js/views/seguridad.js"></script>
+    <script src="js/views/productividad.js"></script>
+    <script src="js/views/eficiencia.js"></script>
+    <script src="js/views/costos.js"></script>
+    <script src="js/views/powerbi.js"></script>
+    
+
+    <script src="js/app.js"></script>
+</body>
+</html>
