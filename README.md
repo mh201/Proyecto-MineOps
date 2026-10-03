@@ -2,9 +2,9 @@
 
 Aplicación web para el análisis de telemetría de equipos de carguío y acarreo en minería a tajo abierto. A partir de los registros crudos de posición de camiones y palas, reconstruye los recorridos, identifica las etapas del ciclo de acarreo y calcula indicadores de productividad, eficiencia, costos y seguridad.
 
-![Vista de la simulación 2D](animacion.png)
-![Vista de un reporte](reporte.png)
-![Vista de la animación 3D](animacion3D.png)
+![Vista de la simulación 2D](animacion.PNG)
+![Vista de un reporte](reporte.PNG)
+![Vista de la animación 3D](animacion3D.PNG)
 
 **Demo:** - No disponible
 
